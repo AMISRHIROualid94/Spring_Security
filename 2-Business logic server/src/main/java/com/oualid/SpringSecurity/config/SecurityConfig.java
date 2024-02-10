@@ -33,12 +33,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception{
         http.csrf().disable();
-        http.addFilterAt(initialAuthenticationFilter, BasicAuthenticationFilter.class)
-                .addFilterAt(jwtAuthenticationFilter,BasicAuthenticationFilter.class);
-
-        http.authorizeRequests()
+        http.authorizeRequests().antMatchers("/business_logic/addUser").permitAll()
                 .anyRequest()
-                .authenticated();
+                .authenticated()
+                .and()
+                .addFilterAt(initialAuthenticationFilter, BasicAuthenticationFilter.class)
+                .addFilterAfter(jwtAuthenticationFilter,BasicAuthenticationFilter.class);
     }
 
     @Override

@@ -40,4 +40,16 @@ public class AuthenticationServerProxy {
 
         return response.getStatusCode().equals(HttpStatus.OK);
     }
+
+    public void AddUser(String username,String password){
+        String url = baseUrl + "/user/add";
+
+        var body = new User();
+        body.setUsername(username);
+        body.setPassword(password);
+
+        var request = new HttpEntity<>(body);
+        restTemplate.postForEntity(url,request,Void.class);
+
+    }
 }

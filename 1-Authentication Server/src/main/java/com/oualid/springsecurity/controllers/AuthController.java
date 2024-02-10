@@ -4,8 +4,12 @@ import com.oualid.springsecurity.models.Otp;
 import com.oualid.springsecurity.models.User;
 import com.oualid.springsecurity.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServlet;
@@ -23,8 +27,11 @@ public class AuthController {
     }
 
     @PostMapping("/user/auth")
-    public void auth(@RequestBody User user){
-        userService.auth(user);
+    public ResponseEntity<String> auth(@RequestBody User user){
+        if(userService.auth(user)){
+            return new ResponseEntity<>("NEED OTP", HttpStatus.OK);
+        }
+        throw new BadCredentialsException("Bad credentials");
     }
 
     @PostMapping("/otp/check")

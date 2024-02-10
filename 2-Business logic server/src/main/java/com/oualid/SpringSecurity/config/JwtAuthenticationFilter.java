@@ -28,23 +28,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = request.getHeader("Authorization");
+        if (jwt != null) {
+            SecretKey key = Keys.hmacShaKeyFor(signingKey.getBytes(StandardCharsets.UTF_8));
 
-        SecretKey key = Keys.hmacShaKeyFor(signingKey.getBytes(StandardCharsets.UTF_8));
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(jwt.substring(7))
+                    .getBody();
 
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(jwt.substring(7))
-                .getBody();
+            String username = String.valueOf(claims.get("username"));
 
-        String username = String.valueOf(claims.get("username"));
+            GrantedAuthority ga = new SimpleGrantedAuthority("user");
+            var auth = new UsernamePasswordAuthentication(username,null, List.of(ga));
 
-        GrantedAuthority ga = new SimpleGrantedAuthority("user");
-        var auth = new UsernamePasswordAuthentication(username,null, List.of(ga));
-
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        } else {
+            SecurityContextHolder.getContext().setAuthentication(null);
+        }
         filterChain.doFilter(request,response);
+
     }
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {

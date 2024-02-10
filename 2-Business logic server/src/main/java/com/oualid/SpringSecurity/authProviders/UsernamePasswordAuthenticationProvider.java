@@ -19,7 +19,7 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
         String username = authentication.getName();
         String password = String.valueOf(authentication.getCredentials());
 
-        proxy.sendAuth(username,password);
+        proxy.sendAuth(username,password);//if status of response is Ok 200 creates UPAuthToken Object
         return new UsernamePasswordAuthenticationToken(username,password);
     }
 

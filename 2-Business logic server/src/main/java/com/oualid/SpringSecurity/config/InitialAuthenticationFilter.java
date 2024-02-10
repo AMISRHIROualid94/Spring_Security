@@ -43,7 +43,7 @@ public class InitialAuthenticationFilter extends OncePerRequestFilter {
             manager.authenticate(a);
         }else {
             Authentication a = new OtpAuthentication(username,code);
-            a = manager.authenticate(a);
+            manager.authenticate(a);
             SecretKey key = Keys.hmacShaKeyFor(
                     signingKey.getBytes(
                             StandardCharsets.UTF_8));

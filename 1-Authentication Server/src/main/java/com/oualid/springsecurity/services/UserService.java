@@ -29,17 +29,18 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRespository.save(user);
     }
-    public void auth(User user){
+    public boolean auth(User user){
         Optional<User> optionalUser = userRespository.findUserByUsername(user.getUsername());
         if (optionalUser.isPresent()) {
             User u = optionalUser.get();
             if (passwordEncoder.matches(user.getPassword(), u.getPassword())) {
                 renewOtp(u);
+                return true;
             } else {
-                throw new BadCredentialsException("Bad credentials");
+                return false;
             }
         }else {
-            throw new BadCredentialsException("Bad credentials");
+            return false;
         }
     }
 
